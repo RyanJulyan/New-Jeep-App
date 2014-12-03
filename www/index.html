@@ -1,0 +1,501 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css"/>
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+<input type="hidden" id="campID" />
+<div data-role="page" id="home">
+	<div data-role="header" data-position="fixed" data-position="fixed" data-tap-toggle="false">
+      <a href="#addcampaign" data-icon="edit" id="user_upload_data" data-transition="flow" data-iconpos="notext">Add Campaign</a>
+      <h1 id="campaignTitle"> Capture Data </h1>
+    </div>
+<div role="main" class="ui-content centerElements">
+	<p>
+    	Select a campaign to cature the data
+    </p>
+  <ul id="campainList" data-role="listview" data-split-icon="bullets" data-split-theme="a" data-inset="true">
+  </ul>
+</div>
+</div>
+<div data-role="page" id="campaign">
+	<div data-role="header" data-position="fixed" data-position="fixed" data-tap-toggle="false">
+      <a href="#home" data-icon="arrow-l" id="user_upload_data" data-transition="flow" data-direction="reverse">Back</a>
+      <h1 id="campaignTitle"> Capture Data </h1>
+    </div>
+	<div role="main" class="ui-content centerElements">
+          <form id="captureForm" onsubmit="return false;">
+            <fieldset data-role="controlgroup" data-type="horizontal">
+              <input type="radio" name="title" id="Mr" value="Mr">
+              <label for="Mr">Mr</label>
+              <input type="radio" name="title" id="Mrs" value="Mrs">
+              <label for="Mrs">Mrs</label>
+              <input type="radio" name="title" id="Ms" value="Ms">
+              <label for="Ms">Ms</label>
+              <input type="radio" name="title" id="Dr" value="Dr">
+              <label for="Dr">Dr</label>
+              <input type="radio" name="title" id="Proff" value="Proff">
+              <label for="Proff">Proff</label>
+              <input type="radio" name="title" id="Other" value="Other">
+              <label for="Other">Other</label>
+            </fieldset>
+            
+            <input type="text" name="Name" id="Name" placeholder="Name">
+            <input type="text" name="Surname" id="Surname" placeholder="Surname">
+            <input type="text" name="Email" id="Email" placeholder="Email">
+            <input type="text" name="telnumber" id="telnumber" placeholder="Phone Number">
+            <input type="text" name="idnumber" id="idnumber" placeholder="ID Number">
+            <input type="text" name="vehicle" id="vehicle" placeholder="Q?">
+            
+            <fieldset data-role="controlgroup" data-type="horizontal">
+              <input type="radio" name="opt" id="optin" value="1" checked="checked">
+              <label for="optin">Opt In</label>
+              <input type="radio" name="opt" id="optout" value="0">
+              <label for="optout">Opt Out</label>
+            </fieldset>
+            <input onclick="captureInfo();" type="submit" value="Save" />
+          </form>
+        <div>
+            <!--<p>Current User: <span class="currentReturnText">Unknown</span></p>-->
+            <p>Number of Submissions: <span id="noOfSubs" class="currentReturnText">0</span></p>
+        </div>
+    </div>
+</div>
+<div data-role="page" id="addcampaign">
+	<div data-role="header" data-position="fixed" data-position="fixed" data-tap-toggle="false">
+      <a href="#home" data-icon="arrow-l" id="addcampaignHome" data-transition="flow" data-direction="reverse">Back</a>
+      <h1> Create Campaign </h1>
+    </div>
+	<div role="main" class="ui-content centerElements">
+          <form id="campaignForm" onsubmit="return false;">
+            <fieldset data-role="controlgroup" data-type="horizontal">
+              <input type="radio" name="company" id="jeep" value="images/jeep.png">
+              <label for="jeep">Jeep</label>
+              <input type="radio" name="company" id="alfa" value="images/alfa.png">
+              <label for="alfa">Alfa Remeo</label>
+              <input type="radio" name="company" id="chrysler" value="images/chrysler.png">
+              <label for="chrysler">Chrysler</label>
+              <input type="radio" name="company" id="Fiat" value="images/Fiat.png">
+              <label for="Fiat">Fiat</label>
+              <input type="radio" name="company" id="dodge" value="images/dodge.png">
+              <label for="dodge">Dodge</label>
+            </fieldset>
+            
+            <input type="text" name="CampaignName" id="CampaignName" placeholder="Campaign Name">
+            <input type="text" name="Dealership" id="Dealership" placeholder="Dealership">
+            <input type="date" name="StartOn" id="StartOn" placeholder="Start On">
+            <input type="date" name="EndOn" id="EndOn" placeholder="End On">
+            
+            <input onclick="addCampain();" type="submit" value="Save" />
+          </form>
+	</div>
+</div>
+<div style=" min-width:400px;" data-role="page" id="campaignInfo" data-theme="a" class="ui-corner-all">
+	<div data-role="header" data-position="fixed" data-position="fixed" data-tap-toggle="false">
+      <a href="#home" data-icon="arrow-l" id="user_data" data-transition="pop" data-direction="reverse">Back</a>
+      <h1 id="capturedTitle"> Captured Data </h1>
+      <a href="#" onclick="syncData()" data-icon="arrow-u" id="user_upload_data" data-transition="pop" data-direction="reverse">Sync</a>
+    </div>
+  <div role="main" class="ui-content centerElements">
+  	<h3>Local Data:</h3>
+     <table data-role="table" id="table-column-toggle2" data-mode="columntoggle" class="ui-responsive table-stroke" >
+      <thead>
+        <tr>
+          <th data-priority="3">Title</th>
+          <th>Name</th>
+          <th data-priority="4">Surname</th>
+          <th data-priority="1">Email</th>
+          <th data-priority="2">Tel Number</th>
+          <th data-priority="6">ID Number</th>
+          <th data-priority="5">Question</th>
+          <th data-priority="8">Opt In</th>
+          <th data-priority="7">Captured On</th>
+          <th>Synced</th>
+        </tr>
+      </thead>
+      <tbody id="campainInfoListLocal">
+        <tr align="center">
+          <td></td>
+          <th>LOADING DATA...</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+	</table>
+    <br />
+    <br />
+    <br />
+    <hr width="60%"/>
+    <br />
+    <h3>Server Data:</h3>
+    <table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke" >
+      <thead>
+        <tr>
+          <th data-priority="3">Title</th>
+          <th>Name</th>
+          <th data-priority="4">Surname</th>
+          <th data-priority="1">Email</th>
+          <th data-priority="2">Tel Number</th>
+          <th data-priority="6">ID Number</th>
+          <th data-priority="5">Question</th>
+          <th data-priority="8">Opt In</th>
+          <th data-priority="7">Captured On</th>
+          <th>Campaign</th>
+        </tr>
+      </thead>
+      <tbody id="campainInfoList">
+        <tr align="center">
+          <td></td>
+          <th>LOADING DATA...</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+	</table>
+  </div>
+</div>
+<script>
+function addCampain(){
+	var status = false;
+	
+	var jeep = $('#jeep');
+	var chrysler = $('#chrysler');
+	var alfa = $('#alfa');
+	var Fiat = $('#Fiat');
+	var dodge = $('#dodge');
+	
+	var CampaignName = $('#CampaignName');
+	var Dealership = $('#Dealership');
+	var StartOn = $('#StartOn');
+	var EndOn = $('#EndOn');
+	
+	if($(jeep).is(':checked')){
+		status = true;
+		var LogoSrc = jeep.val();
+	}
+	else if($(chrysler).is(':checked')){
+		status = true;
+		var LogoSrc = chrysler.val();
+	}
+	else if($(alfa).is(':checked')){
+		status = true;
+		var LogoSrc = alfa.val();
+	}
+	else if($(Fiat).is(':checked')){
+		status = true;
+		var LogoSrc = Fiat.val();
+	}
+	else if($(dodge).is(':checked')){
+		status = true;
+		var LogoSrc = dodge.val();
+	}
+	else{
+		status = false;
+	}
+	
+	if((CampaignName.val() != null) && CampaignName.val().length >= 2){
+		status = true;
+	}
+	else{
+		status = false;
+	}
+	
+	if((Dealership.val() != null) && Dealership.val().length >= 2){
+		status = true;
+	}
+	else{
+		status = false;
+	}
+	
+	if((StartOn.val() != null) && StartOn.val().length >= 2){
+		status = true;
+	}
+	else{
+		status = false;
+	}
+	
+	if((EndOn.val() != null) && EndOn.val().length >= 2){
+		status = true;
+	}
+	else{
+		status = false;
+	}
+	
+	if(status == true){
+		var CampaignName = CampaignName.val(), 
+		Dealership = Dealership.val(),
+		StartOn = StartOn.val(), 
+		EndOn = EndOn.val();
+		
+		$.get( "include/set_campaign.php", {campaign_name:CampaignName, dealership:Dealership, logo_src:LogoSrc, starton:StartOn, endon:EndOn})
+			.done(function( data ) {
+				var data = data;
+				console.log(data.status);
+				alert(data.status);
+				var resetVal = setInterval(function(){getAllCampaigns(); clearInterval(resetVal);}, 500);
+				$( '#campaignForm' ).each(function(){
+					this.reset();
+				});
+		});
+	}
+	else{
+		alert("Please input all feilds with at least 2 characters");
+	}
+}
+
+function syncData(){
+	var campaign_id = window.top.name;
+	console.log(campaign_id);
+	if (localStorage[campaign_id]) {
+		var objArr = JSON.parse(localStorage[campaign_id]);
+		console.log(objArr);
+		for(var i = 0; i < objArr.length;i++){
+			if(objArr[i].hasOwnProperty('capturedinfo_id')){
+				
+			}
+			else{
+				sendInfo(i, objArr[i].campaign_id, objArr[i].title, objArr[i].name, objArr[i].surname, objArr[i].email, objArr[i].telnumber, objArr[i].idnumber, objArr[i].vehicle, objArr[i].optin)
+			}
+		}
+	}
+}
+
+function sendInfo(arrIndex, campID, title, Name, Surname, Email, Telnumber, IDnumber, Vehicle, opt){
+	$.get( "include/set_campaign_info.php", {campaign_id:campID,promoter_id:"1", admin_id:"1", title:title, name:Name, surname:Surname, email:Email, telnumber:Telnumber, idnumber:IDnumber, vehicle:Vehicle, optin:opt, capturedlatlong:"Unknown"})
+		.done(function( data ) {
+			console.log({campaign_id:campID,promoter_id:"1", admin_id:"1", title:title, name:Name, surname:Surname, email:Email, telnumber:Telnumber, idnumber:IDnumber, vehicle:Vehicle, optin:opt, capturedlatlong:"Unknown"});
+			console.log(data);
+			if (localStorage[campID]) {
+				var objArr = JSON.parse(localStorage[campID]);
+				objArr[arrIndex].capturedinfo_id = data.capturedinfo_id;
+				localStorage.setItem(campID, JSON.stringify(objArr));
+			}
+			loadCampainInfoList(campID, $('#capturedTitle').html());
+	});
+}
+
+function captureInfo(){
+	var status = false;
+	
+	var Mr = $('#Mr');
+	var Mrs = $('#Mrs');
+	var Ms = $('#Ms');
+	var Dr = $('#Dr');
+	var Proff = $('#Proff');
+	var Other = $('#Other');
+	
+	var Name = $('#Name');
+	var Surname = $('#Surname');
+	var Email = $('#Email');
+	var telnumber = $('#telnumber');
+	var idnumber = $('#idnumber');
+	var vehicle = $('#vehicle');
+	
+	var optin = $('#optin');
+	var optout = $('#optout');
+	
+	if($(optin).is(':checked')){
+		status = true;
+		var opt = optin.val();
+	}
+	else if($(optout).is(':checked')){
+		status = true;
+		var opt = optout.val();
+	}
+	else{
+		status = false;
+	}
+	
+	if($(Mr).is(':checked')){
+		status = true;
+		var title = Mr.val();
+	}
+	else if($(Mrs).is(':checked')){
+		status = true;
+		var title = Mrs.val();
+	}
+	else if($(Ms).is(':checked')){
+		status = true;
+		var title = Ms.val();
+	}
+	else if($(Dr).is(':checked')){
+		status = true;
+		var title = Dr.val();
+	}
+	else if($(Proff).is(':checked')){
+		status = true;
+		var title = Proff.val();
+	}
+	else if($(Other).is(':checked')){
+		status = true;
+		var title = Other.val();
+	}
+	else{
+		status = false;
+	}
+	
+	if((Name.val() != null) && Name.val().length >= 2){
+		status = true;
+	}
+	else{
+		status = false;
+	}
+	
+	if((Surname.val() != null) && Surname.val().length >= 2){
+		status = true;
+	}
+	else{
+		status = false;
+	}
+	
+	if((Email.val() != null) && Email.val().length >= 2){
+		status = true;
+	}
+	else{
+		status = false;
+	}
+	
+	if((telnumber.val() != null) && telnumber.val().length >= 2){
+		status = true;
+	}
+	else{
+		status = false;
+	}
+	
+	if((idnumber.val() != null) && idnumber.val().length >= 2){
+		status = true;
+	}
+	else{
+		status = false;
+	}
+	
+	if((vehicle.val() != null) && vehicle.val().length >= 2){
+		status = true;
+	}
+	else{
+		status = false;
+	}
+	
+	if(status == true){
+		var Email = Email.val(),
+		Name = Name.val(),
+		Surname = Surname.val(),
+		Telnumber = telnumber.val(),
+		IDnumber = idnumber.val(), 
+		Vehicle = vehicle.val();
+		var campID = window.top.name;
+		if (localStorage[campID]) {
+            var objArr = JSON.parse(localStorage[campID]);
+			objArr.push({campaign_id:campID,promoter_id:"1", admin_id:"1", title:title, name:Name, surname:Surname, email:Email, telnumber:Telnumber, idnumber:IDnumber, vehicle:Vehicle, optin:opt, capturedlatlong:"Unknown"});
+			localStorage.setItem(campID, JSON.stringify(objArr));
+			$('#noOfSubs').html(objArr.length);
+			alert('Saved')
+			$( '#captureForm' ).each(function(){
+				this.reset();
+			});
+        } else {
+            localStorage.setItem(campID, JSON.stringify([{campaign_id:campID,promoter_id:"1", admin_id:"1", title:title, name:Name, surname:Surname, email:Email, telnumber:Telnumber, idnumber:IDnumber, vehicle:Vehicle, optin:opt, capturedlatlong:"Unknown"}]));
+			alert('Saved');
+			$('#noOfSubs').html("1");
+			$( '#captureForm' ).each(function(){
+				this.reset();
+			});
+        }
+		//sendInfo(campID, title, Name, Surname, Email, Telnumber, IDnumber, Vehicle, opt)
+	}
+	else{
+		alert("Please input all feilds with at least 2 characters");
+	}	
+}
+
+function loadCampainInfoList(campaign_id, campaign_name){
+	window.top.name = campaign_id;
+	if (localStorage[campaign_id]) {
+		var localTemplate = '';
+		var objArr = JSON.parse(localStorage[campaign_id]);
+		for(var i = 0; i < objArr.length;i++){
+			if(objArr[i].optin == 1){
+				optin = "Yes";
+			}
+			else{
+				optin = "No";
+			}
+			if(objArr[i].hasOwnProperty('capturedinfo_id')){
+				synced = "Yes";
+				col = "";
+			}
+			else{
+				synced = "No";
+				col = "";
+			}
+			
+			localTemplate += '<tr><td>'+ objArr[i].title +'</td><th>'+ objArr[i].name +'</th><td>'+ objArr[i].surname +'</td><td>'+ objArr[i].email +'</td><td>'+ objArr[i].telnumber +'</td><td>'+ objArr[i].idnumber +'</td><td>'+ objArr[i].vehicle +'</td><td>'+ optin +'</td><td>'+ objArr[i].capturedon +'</td><td>'+ synced +'</td><tr>';
+		}
+		$('#campainInfoListLocal').html('').append(localTemplate);
+	}
+	$.get( "include/get_campaign_info.php", { campaign_id: campaign_id } )
+		.done(function( data ) {
+			console.log(data);
+			var template = '';
+			for(var i in data){
+				if (data[i] != (data.status)) {
+					if(data[i].optin == 1){
+						optin = "Yes";
+					}
+					else{
+						optin = "No";
+					}
+					template += '<tr><td>'+ data[i].title +'</td><th>'+ data[i].name +'</th><td>'+ data[i].surname +'</td><td>'+ data[i].email +'</td><td>'+ data[i].telnumber +'</td><td>'+ data[i].idnumber +'</td><td>'+ data[i].vehicle +'</td><td>'+ optin +'</td><td>'+ data[i].capturedon +'</td><td>'+ data[i].campaign_name +'</td><tr>';
+				}
+			}
+			$('#capturedTitle').html(campaign_name +"'s Data");
+			$('#campainInfoList').html('').append(template).closest("table#table-column-toggle").table("refresh");
+			console.log(data);
+	});
+}
+
+function getAllCampaigns(){
+	$.get( "include/get_all_campaigns.php")
+		.done(function( data ) {
+			var template = '';
+			for(var i in data){
+				if (data[i] != (data.status)) {
+					template += '<li><a onclick="window.top.name = '+ data[i].campaign_id +'" href="#campaign" data-transition="flow"><img src="'+ data[i].logo_src +'"><h2>'
+								+ data[i].campaign_name +
+							'</h2><p>Activation for '
+								+ data[i].dealership +
+							'</p><p class="ui-li-aside"><strong>'+ data[i].starton +'</strong> - <strong>'+ data[i].endon +'</strong></p></a><a href="#campaignInfo" data-transition="pop" onclick="loadCampainInfoList('+ data[i].campaign_id +', \' '+ data[i].campaign_name +' \')">See Data</a></li>';
+				}
+			}
+			$('#campainList').html("").append(template).listview('refresh');
+	});
+}
+getAllCampaigns();
+</script>
+<style>
+	.currentReturnText{
+		color: #38c;
+		font-weight: bold;
+	}
+	.centerElements{
+		text-align:center;
+	}
+</style>
+</body>
+</html>
